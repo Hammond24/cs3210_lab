@@ -1,4 +1,5 @@
 // Mutual exclusion spin locks.
+#include <stdatomic.h>
 
 #include "types.h"
 #include "defs.h"
@@ -12,8 +13,9 @@
 void
 initlock(struct spinlock *lk, char *name)
 {
+  atomic_init(&lk->locked, 0);
+
   lk->name = name;
-  lk->locked = 0;
   lk->cpu = 0;
 }
 
@@ -28,14 +30,14 @@ acquire(struct spinlock *lk)
   if(holding(lk))
     panic("acquire");
 
-  // The xchg is atomic.
-  while(xchg(&lk->locked, 1) != 0)
+  // Use c11 atomics to acquire the lock
+  //  Here we atomically exchange locked with 1.  If locked was 0, then we've
+  //    just acquired the lock!
+  //  We use the acquire release semantics (orderings).  We really only want
+  //    acquire semantics, but we are doing a read and modify operation at once
+  //    which requires acquire (write) and release (read) ordering semantics.
+  while (atomic_exchange_explicit(&lk->locked, 1, memory_order_acq_rel) != 0)
     ;
-
-  // Tell the C compiler and the processor to not move loads or stores
-  // past this point, to ensure that the critical section's memory
-  // references happen after the lock is acquired.
-  __sync_synchronize();
 
   // Record info about lock acquisition for debugging.
   lk->cpu = mycpu();
@@ -52,17 +54,12 @@ release(struct spinlock *lk)
   lk->pcs[0] = 0;
   lk->cpu = 0;
 
-  // Tell the C compiler and the processor to not move loads or stores
-  // past this point, to ensure that all the stores in the critical
-  // section are visible to other cores before the lock is released.
-  // Both the C compiler and the hardware may re-order loads and
-  // stores; __sync_synchronize() tells them both not to.
-  __sync_synchronize();
-
-  // Release the lock, equivalent to lk->locked = 0.
-  // This code can't use a C assignment, since it might
-  // not be atomic. A real OS would use C atomics here.
-  asm volatile("movl $0, %0" : "+m" (lk->locked) : );
+  
+  // Use c11 atomics to release the lock.
+  //  Here we set the locked value to 0 atomically
+  //  We also give it "release" semantics, as we're doing an unlock 
+  //    (e.g. release) operation
+  atomic_store_explicit(&lk->locked, 0, memory_order_release);
 
   popcli();
 }

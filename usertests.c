@@ -1550,7 +1550,7 @@ void
 validateint(int *p)
 {
   int res;
-  asm("mov %%esp, %%ebx\n\t"
+  __asm__("mov %%esp, %%ebx\n\t"
       "mov %3, %%esp\n\t"
       "int %2\n\t"
       "mov %%ebx, %%esp" :
@@ -1711,9 +1711,9 @@ uio()
     port = RTC_ADDR;
     val = 0x09;  /* year */
     /* http://wiki.osdev.org/Inline_Assembly/Examples */
-    asm volatile("outb %0,%1"::"a"(val), "d" (port));
+    __asm__ volatile("outb %0,%1"::"a"(val), "d" (port));
     port = RTC_DATA;
-    asm volatile("inb %1,%0" : "=a" (val) : "d" (port));
+    __asm__ volatile("inb %1,%0" : "=a" (val) : "d" (port));
     printf(1, "uio: uio succeeded; test FAILED\n");
     exit();
   } else if(pid < 0){

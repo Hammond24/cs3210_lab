@@ -1,3 +1,5 @@
+#include <stdatomic.h>
+
 #include "types.h"
 #include "defs.h"
 #include "param.h"
@@ -53,7 +55,7 @@ mpmain(void)
 {
   cprintf("cpu%d: starting %d\n", cpuid(), cpuid());
   idtinit();       // load idt register
-  xchg(&(mycpu()->started), 1); // tell startothers() we're up
+  atomic_store(&mycpu()->started, 1); // tell startothers() we're up -- atomically
   scheduler();     // start running processes
 }
 
@@ -89,7 +91,7 @@ startothers(void)
     lapicstartap(c->apicid, V2P(code));
 
     // wait for cpu to finish mpmain()
-    while(c->started == 0)
+    while(atomic_load(&c->started) == 0)
       ;
   }
 }
