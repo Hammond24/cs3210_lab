@@ -1,5 +1,7 @@
 project(user ASM)
 
+include(Sources.cmake)
+
 include_directories(include)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-builtin -nostdinc -nostartfiles -nodefaultlibs -fno-pic -m32")
@@ -14,21 +16,6 @@ set(CMAKE_C_LINK_EXECUTABLE "ld -m elf_i386 -N -e main -Ttext 0 <OBJECTS> -o <TA
 #  -- binary should add a _...
 # Need to create disassembly
 # Need to create symbol files
-
-set(ulib_SOURCES
-  asm/usys.S
-
-  src/ulib.c
-  src/umalloc.c
-  src/printf.c
-  )
-
-# Start with just init...
-set(user_SOURCES
-  src/init.c
-  src/sh.c
-  src/ls.c
-  )
 
 set_property(GLOBAL PROPERTY user_programs)
 

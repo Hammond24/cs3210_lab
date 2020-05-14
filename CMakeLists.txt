@@ -43,6 +43,12 @@ add_custom_command(
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bootblock/bootblock ${CMAKE_CURRENT_BINARY_DIR}/kernel/kernel
 )
 
+# Copy the run script
+configure_file(${CMAKE_SOURCE_DIR}/scripts/xv6-qemu ${CMAKE_CURRENT_BINARY_DIR}/xv6-qemu COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/gdbinit ${CMAKE_CURRENT_BINARY_DIR}/.gdbinit COPYONLY)
+
+# Copy the gdb script
+
 add_custom_target(
   image ALL
   DEPENDS buildkern buildboot xv6.img makeuserfs
