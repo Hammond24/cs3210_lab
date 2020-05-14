@@ -38,6 +38,7 @@ while true; do
       ;;
     -v|--verbose)
       VERBOSE=true
+      shift
       ;;
     -c|--num-cpus)
       CPUS="$2"
@@ -63,9 +64,9 @@ done
 
 SCRIPT="qemu-system-i386 ${GRAPHIC} -drive file=user/fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp ${CPUS} -m ${MEMORY} ${GDB}"
 
-#if [[ ${VERBOSE} ]]; then
+if [[ ${VERBOSE} ]]; then
   echo "COMMAND: ${SCRIPT}"
-#fi
+fi
 
 ${SCRIPT}
 
