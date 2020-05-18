@@ -28,6 +28,7 @@ set(kernel_SOURCES
 	src/proc.c
 	src/sleeplock.c
 	src/spinlock.c
+  src/stab.c
 	src/string.c
 	src/syscall.c
 	src/sysfile.c

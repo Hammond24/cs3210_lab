@@ -15,6 +15,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "string.h"
 
 static void consputc(int);
 

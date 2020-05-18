@@ -1,3 +1,6 @@
+#ifndef KERNEL_INCLUDE_DATE_h_
+#define KERNEL_INCLUDE_DATE_h_
+
 struct rtcdate {
   uint second;
   uint minute;
@@ -6,3 +9,5 @@ struct rtcdate {
   uint month;
   uint year;
 };
+
+#endif  // KERNEL_INCLUDE_DATE_h_

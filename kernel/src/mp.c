@@ -10,6 +10,7 @@
 #include "mp.h"
 #include "mmu.h"
 #include "proc.h"
+#include "string.h"
 
 struct cpu cpus[NCPU];
 int ncpu;

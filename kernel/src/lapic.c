@@ -9,6 +9,7 @@
 #include "memlayout.h"
 #include "traps.h"
 #include "mmu.h"
+#include "string.h"
 
 // Local APIC registers, divided by 4 for use as uint[] indices.
 #define ID      (0x0020/4)   // ID

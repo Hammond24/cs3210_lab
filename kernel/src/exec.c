@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "defs.h"
 #include "elf.h"
+#include "string.h"
 
 int
 exec(char *path, char **argv)
