@@ -6,12 +6,15 @@ set(bootblock_SOURCES
   # NOTE: bootasm.S must go first in this list, to ensure its placed at 0x7c00
   #   in the bootloader dump
   bootasm.S
+  e820.S
   bootmain.c)
 
 add_library(bootblockobjs OBJECT
   ${bootblock_SOURCES})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-builtin -fno-pic -nostdinc -m32")
+# NOTE: I'm omitting frame pointers, which will screw hard with debugging,
+#   but it should be fine for the boot block?
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-builtin -fno-pic -fomit-frame-pointer -nostdinc -m32")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m elf_i386")
 
