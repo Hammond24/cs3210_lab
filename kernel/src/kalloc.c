@@ -22,6 +22,8 @@ struct {
   struct spinlock lock;
   int use_lock;
   struct run *freelist;
+
+  uint phys_top;
 } kmem;
 
 // Initialization happens in two phases.
@@ -34,14 +36,17 @@ kinit1(void *vstart, void *vend)
 {
   initlock(&kmem.lock, "kmem");
   kmem.use_lock = 0;
+  // We haven't found phystop yet, don't use this.
+  kmem.phys_top = 0;
   freerange(vstart, vend);
 }
 
 void
-kinit2(void *vstart, void *vend)
+kinit2(void *vstart, void *vend, uint phys_top)
 {
   freerange(vstart, vend);
   kmem.use_lock = 1;
+  kmem.phys_top = phys_top;
 }
 
 void
@@ -62,8 +67,10 @@ kfree(char *v)
 {
   struct run *r;
 
-  if((uint)v % PGSIZE || v < end || V2P(v) >= PHYSTOP)
+  if((uint)v % PGSIZE || v < end || (kmem.phys_top && V2P(v) >= kmem.phys_top))
+  {
     panic("kfree");
+  }
 
   // Fill with junk to catch dangling refs.
   memset(v, 1, PGSIZE);

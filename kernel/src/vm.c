@@ -111,13 +111,16 @@ static struct kmap {
 } kmap[] = {
  { (void*)KERNBASE, 0,             EXTMEM,    PTE_W}, // I/O space
  { (void*)KERNLINK, V2P(KERNLINK), V2P(data), 0},     // kern text+rodata
- { (void*)data,     V2P(data),     PHYSTOP,   PTE_W}, // kern data+memory
+
+ // kern data+memory  -- the 0x5f.. addr should be the top of physical memory.  Fill that in dynamically in setupkvm.
+ { (void*)data,     V2P(data),     0x5F5F5F5F,   PTE_W},
+
  { (void*)DEVSPACE, DEVSPACE,      0,         PTE_W}, // more devices
 };
 
 // Set up kernel part of a page table.
 pde_t*
-setupkvm(void)
+setupkvm()
 {
   pde_t *pgdir;
   struct kmap *k;
@@ -125,22 +128,30 @@ setupkvm(void)
   if((pgdir = (pde_t*)kalloc()) == 0)
     return 0;
   memset(pgdir, 0, PGSIZE);
-  if (P2V(PHYSTOP) > (void*)DEVSPACE)
+  if (P2V(kmap[2].phys_end) > (void*)DEVSPACE)
+  {
     panic("PHYSTOP too high");
+  }
+
   for(k = kmap; k < &kmap[NELEM(kmap)]; k++)
+  {
     if(mappages(pgdir, k->virt, k->phys_end - k->phys_start,
-                (uint)k->phys_start, k->perm) < 0) {
+                (uint)k->phys_start, k->perm) < 0)
+    {
       freevm(pgdir);
       return 0;
     }
+  }
   return pgdir;
 }
 
 // Allocate one page table for the machine for the kernel address
 // space for scheduler processes.
 void
-kvmalloc(void)
+kvmalloc(uint phys_top)
 {
+  kmap[2].phys_end = phys_top;
+
   kpgdir = setupkvm();
   switchkvm();
 }

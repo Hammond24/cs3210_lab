@@ -67,7 +67,7 @@ void            ioapicinit(void);
 char*           kalloc(void);
 void            kfree(char*);
 void            kinit1(void*, void*);
-void            kinit2(void*, void*);
+void            kinit2(void*, void*, uint);
 
 // kbd.c
 void            kbdintr(void);
@@ -163,7 +163,7 @@ void            uartputc(int);
 
 // vm.c
 void            seginit(void);
-void            kvmalloc(void);
+void            kvmalloc(uint);
 pde_t*          setupkvm(void);
 char*           uva2ka(pde_t*, char*);
 int             allocuvm(pde_t*, uint, uint);
