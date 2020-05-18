@@ -17,3 +17,4 @@
 #define P2V_WO(x) ((x) + KERNBASE)    // same as P2V, but without casts
 
 #endif  // INCLUDE_MEMLAYOUT_h_
+
