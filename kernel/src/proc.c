@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "string.h"
+#include "stdio.h"
 
 struct {
   struct spinlock lock;

@@ -1,5 +1,7 @@
 #include "asm/x86.h"
 
+#include "stdio.h"
+
 #include "types.h"
 #include "param.h"
 #include "memlayout.h"

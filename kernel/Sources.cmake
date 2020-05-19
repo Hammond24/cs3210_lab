@@ -26,6 +26,7 @@ set(kernel_SOURCES
 	src/picirq.c
 	src/pipe.c
 	src/proc.c
+  src/printfmt.c
 	src/sleeplock.c
 	src/spinlock.c
   src/stab.c

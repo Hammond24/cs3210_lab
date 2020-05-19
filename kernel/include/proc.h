@@ -4,6 +4,7 @@
 #include <stdatomic.h>
 
 #include "param.h"
+#include "mmu.h"
 
 // Per-CPU state
 struct cpu {

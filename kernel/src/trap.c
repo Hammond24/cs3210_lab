@@ -6,6 +6,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "traps.h"
+#include "stdio.h"
 #include "spinlock.h"
 
 // Interrupt descriptor table (shared by all CPUs).

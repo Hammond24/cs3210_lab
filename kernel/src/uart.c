@@ -60,7 +60,7 @@ uartputc(int c)
   outb(COM1+0, c);
 }
 
-static int
+int
 uartgetc(void)
 {
   if(!uart)

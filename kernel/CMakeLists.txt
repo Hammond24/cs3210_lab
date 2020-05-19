@@ -2,11 +2,32 @@ project(kernel ASM)
 
 include_directories(include)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-builtin -fno-pic -m32")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-pic -m32")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m elf_i386")
 
 include(Sources.cmake)
+
+# Get libgcc...
+execute_process(COMMAND gcc -m32 -print-libgcc-file-name
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  OUTPUT_VARIABLE GCC_LIBRARY
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+message(STATUS "GOT RES ${GCC_RES}")
+message(STATUS "GOT GCCVAR ${GCC_LIBRARY}")
+message(STATUS "GOT ERROR ${GCC_ERROR}")
+
+
+set (git_cmd "git")
+set (git_arg "--version")
+message(STATUS "git cmd: ${git_cmd}")
+execute_process(COMMAND ${git_cmd} ${git_arg}
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  RESULT_VARIABLE git_result
+  OUTPUT_VARIABLE git_ver)
+
+message(STATUS "git ver[${git_result}]: ${git_ver}")
 
 add_custom_command(
   OUTPUT gen/vectors.S
@@ -68,7 +89,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT kernel
-  COMMAND ld -m elf_i386 -nostdlib -T ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld -o kernel ${kernel_OBJECTS} -b binary initcode entryother
+  COMMAND ld -m elf_i386 -T ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld -o kernel ${kernel_OBJECTS} ${GCC_LIBRARY} -b binary initcode entryother
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld $<TARGET_OBJECTS:kernelobjs> $<TARGET_OBJECTS:vectorobj> ${CMAKE_CURRENT_BINARY_DIR}/initcode ${CMAKE_CURRENT_BINARY_DIR}/entryother) 
 
 add_custom_command(

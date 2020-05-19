@@ -6,6 +6,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "syscall.h"
+#include "stdio.h"
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
