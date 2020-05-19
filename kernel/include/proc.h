@@ -1,4 +1,9 @@
+#ifndef KERNEL_INCLUDE_PROC_h_
+#define KERNEL_INCLUDE_PROC_h_
+
 #include <stdatomic.h>
+
+#include "param.h"
 
 // Per-CPU state
 struct cpu {
@@ -58,3 +63,5 @@ struct proc {
 //   original data and bss
 //   fixed-size stack
 //   expandable heap
+
+#endif  // KERNEL_INCLUDE_PROC_h_

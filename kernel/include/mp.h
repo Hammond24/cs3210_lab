@@ -1,3 +1,6 @@
+#ifndef KERNEL_INCLUDE_MP_h_
+#define KERNEL_INCLUDE_MP_h_
+
 // See MultiProcessor Specification Version 1.[14]
 
 struct mp {             // floating pointer
@@ -54,3 +57,5 @@ struct mpioapic {       // I/O APIC table entry
 
 //PAGEBREAK!
 // Blank page.
+
+#endif  // KERNEL_INCLUDE_MP_h_

@@ -3,6 +3,11 @@
 #ifndef INCLUDE_MMU_h_
 #define INCLUDE_MMU_h_
 
+// Include types.h if this is a c processor, and not an assembly file...
+#ifndef __ASSEMBLER__
+#  include "types.h"
+#endif
+
 // Eflags register
 #define FL_IF           0x00000200      // Interrupt Enable
 

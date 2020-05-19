@@ -6,13 +6,13 @@ endif()
 
 project(xv6)
 
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-pic -static -fno-builtin -fno-strict-aliasing -Wall -MD -ggdb -Werror -fno-omit-frame-pointer -fno-stack-protector")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -Wall -ggdb -Werror -fno-omit-frame-pointer -fno-stack-protector")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-pic -static -fno-builtin -fno-strict-aliasing -Wall -MD -gstabs+ -Werror -fno-omit-frame-pointer -fno-stack-protector")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -Wall -gstabs -Werror -fno-omit-frame-pointer -fno-stack-protector")
 
 set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
-set(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb3")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -gstabs")
 
-set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -gdwarf-2 -Wa,-divide")
 
 function(add_prefix_suffix var prefix suffix)
   set(listVar "")

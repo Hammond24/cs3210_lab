@@ -81,6 +81,7 @@ cprintf(char *fmt, ...)
       printint(*argp++, 10, 1);
       break;
     case 'x':
+    case 'X':
     case 'p':
       printint(*argp++, 16, 0);
       break;
