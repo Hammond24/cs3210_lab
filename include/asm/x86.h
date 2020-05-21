@@ -103,17 +103,12 @@ readeflags(void)
   return eflags;
 }
 
-// This needs to be always inlined, otherwise the ebp is modified
-static __inline uint
-read_ebp(void)
-{
-  uint ebp;
-  // Force the prologue before ebp
-  __asm __volatile("" : : :"memory");
-  __asm __volatile("movl %%ebp,%0" : "=r" (ebp));
-
-  return ebp;
-}
+// This is a define, so its always inlined
+#define read_ebp(dest) do { \
+    __asm __volatile("" : : : "memory"); \
+    __asm __volatile("movl %%ebp,%0" : "=r" (dest)); \
+    __asm __volatile("" : : : "memory"); \
+  } while (0)
 
 static inline void
 loadgs(ushort v)
