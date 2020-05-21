@@ -6,8 +6,6 @@ include_directories(include)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -fno-builtin -nostdinc -nostartfiles -nodefaultlibs -fno-pic -m32")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
-#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -N -e main -Ttext 0")
-# FIXME: Maybe use... unclear
 set(CMAKE_C_LINK_EXECUTABLE "ld -m elf_i386 -N -e main -Ttext 0 <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 
 # We need to do several things --
@@ -35,8 +33,13 @@ function(add_user_program program_src)
 
   # First, build the program
   add_executable(${output_exe} ${program_src} $<TARGET_OBJECTS:ulib>)
+
   # Second, disassemble the program
-  # Third, get symbols
+  add_custom_command(TARGET ${output_exe}
+    POST_BUILD
+    COMMAND objdump -S ${output_exe} > ${output_exe}.asm
+    COMMENT "Disassembling ${output_exe} > ${CMAKE_CURRENT_BINARY_DIR}/${output_exe}.asm"
+    BYPRODUCTS ${output_exe}.asm)
 endfunction(add_user_program)
 
 foreach(prog_src ${user_SOURCES})
