@@ -73,14 +73,19 @@ Now, in a separate terminal, launch gdb from your build directory:
   gdb
 ```
 
-This should take you to a gdb console, with the initial BIOS ljmp instruction
-from the x86 machine's reset vector:
+**NOTE:** gdb may give you an error.  Please follow the instructions they give
+you to enable gdb to use our `.gdbinit` script to connect to qemu.
+
+Once this is complete, it should take you to a gdb console, with the initial
+BIOS ljmp instruction from the x86 machine's reset vector:
 ```
 ljmp   $0xf000,$0xe05b
 ```
 
-What do the two arguments to ljmp mean? What is the linear address to which it
-is jumping?
+This is a 16-bit real-mode instruction (an obsure mode of the x86 processor run
+at boot).  The 0xf000 is the real-mode segment, with 0xe05b the jumped to
+address.  Look up real-mode addressing, what is the linear address to which it
+is jumping? (question is ungraded)
 
 Find the address of \_start, the entry point of the kernel:
 ```
@@ -126,41 +131,37 @@ Look at the registers and stack:
 The stack grows from higher addresses to lower in x86, so items pushed on the
 stack will be at higher addresses the earlier they were pushed on.
 
-## Questions:
+## Graded Questions:
 
 Answer the following:
 
-2a. Where is the start of the stack?
+1. What address is the start (top) of the stack?
 
-2b. What items are on the stack at this point?
+2. What items are on the stack at this point (pc = 0x10000c)?
 
 To understand what is on the stack, you need to understand the boot procedure
 because at this point the kernel has not started, so anything on the stack was
-put there by the bootblock. Look at the files bootasm.S, bootmain.c, and
-bootblock.asm. Can you see what they are putting on the stack?
+put there by the bootblock. Look at the files `bootblock/bootasm.S`,
+`bootblock/bootmain.c`, and `build/bootblock/bootblock.asm`. Can you see what
+they are putting on the stack?
 
-2c. Restart qemu and gdb as above but now set a break-point at 0x7c00. This is
-the start of the boot block (bootasm.S). Using the single instruction step (si)
-step through the bootblock. Where is the stack pointer initialized?
+3. Restart qemu and gdb as above but now set a break-point at 0x7c00. This is
+the start of the boot block (`bootblock/bootasm.S`). Using the single
+instruction step (si) step through the bootblock. Where is the stack pointer
+initialized (filename, line)?
 
-2d. Single step into bootmain. Now look at the stack using x/24x $esp. What is
+4. Single step into bootmain. Now look at the stack using x/24x $esp. What is
 there?
 
-2e. What does the initial assembly of bootmain do to the stack? (Look in
+5. What does the initial assembly of bootmain do to the stack? (Look in
 bootblock.asm for bootmain.)
 
-2f. Continue tracing. You can use breakpoints to skip over things. Look for
+6. Continue tracing. You can use breakpoints to skip over things. Look for
 where eip is set to 0x10000c. What happens to the stack as a result of that
 call? Look at the bootmain C code and compare to the bootblock.asm assembly
 code.
 
-Submit the output of x/24x $esp with the stack annotated, plus the answers to
-the above questions. Name your file hwN.txt where N is the number on the
-schedule.
-
-
 ## Extra (not graded):
-
 
 For thought: (let us know if you play with it!): Most modern OS's boot using a
 firmware standard called UEFI instead of the older standard BIOS. Bootloaders
