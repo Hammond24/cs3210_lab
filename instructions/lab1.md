@@ -8,6 +8,8 @@ The lab is composed of three parts:
  - Second, you will add some debugging functionality to the xv6 kernel.
  - Third, you will get familiar with the boot procedure of xv6 by modifying the
    kernel to support variable memory sizes.
+ - Fourth, you will add a system-call to the xv6 kernel to let the user query
+   the available memory.
 
 
 ## Part 1 - checking out the repository
