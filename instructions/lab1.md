@@ -4,18 +4,17 @@ The goal of this lab is to get you familiar with kernel devlopment, and our xv6
 environment.
 
 The lab is composed of three parts:
- - First, you will use git to checkout, and build the repository.
+ - First, you will use git to checkout, and build the repository. (ungraded, but
+   required for the rest of the lab)
  - Second, you will add some debugging functionality to the xv6 kernel.
  - Third, you will get familiar with the boot procedure of xv6 by modifying the
    kernel to support variable memory sizes.
- - Fourth, you will add a system-call to the xv6 kernel to let the user query
+
+ - **UNSURE IF I'LL ADD THIS** Fourth, you will add a system-call to the xv6 kernel to let the user query
    the available memory.
 
 
 ## Part 1 - checking out the repository
-
-**FIXME** Much of this is likely to change as I adjust the course
-structure/autograder stuff...
 
 All of the code for this course will be distributed and turned in using the
 [git](www.git-scm.com) revision system.  If you don't know git, we recommend
@@ -27,8 +26,9 @@ overview helpful.
 The xv6 repository we're using for this course is avaialble on Georgia Tech's
 github:
 
-**TODO INSERT LINK**
-
+```bash
+git clone git@github.gatech.edu:cs3210-fall20/<your_uniquename>-xv6-public.git
+```
 
 For this lab, we will be using the lab1 branch within git.  You may switch to it
 with:
@@ -69,23 +69,25 @@ This should take you to a shell prompt, where you can use your basic xv6
 commands (try typing "ls" to see what files exist in your root directory).
 
 You may terminate the qemu instance launched by the script by hitting
-CTRL-A,CTRL-X.
+CTRL-a,x.
 
 #### What's happening under the hood
 
 Our xv6 kernel is an OS kernel, its made to run on bare-hardware.  However,
 launching it on your PC seems like a bad idea, as it would overwrite your
-existing OS.  Instead, we want to run it in a virtual environment thats much
-more friendly for testing.  We could use a classic Virtual Machine (VM)
+existing OS.  Instead, we want to run it in a virtual environment that's much
+more friendly for testing.  We could use a classic virtual machine (VM)
 solution (e.g. VMWare or VirtualBox), but those are pretty heavy-weight, take a
 long time to launch, and are hard to configure.  Instead, we use qemu, a machine
 emulator.  Qemu emulates a cpu, causing it to look to the program running inside
-of it like it has its own raw x86 CPU.  This is slow, and you'll notice that xv6
+of it like it has its own raw x86 CPU.  This is slow, and you may notice that xv6
 actually runs really slowly in qemu, but its much more convenient for deubbing,
-as launching and tearing down a qemu instance is very fast!
+as launching and tearing down a qemu instance is very fast!  It is possible to
+run xv6 on a more traditional VM, or even raw hardware! However, we wont require
+that for the purpose of this course.
 
 You can see the exact command used by turning on the verbose option to
-`xv6-qemu` with `-v` or `--verbose`, and all available commands with `-h`
+`xv6-qemu` with `-v` or `--verbose`, and all available options with `-h`
 
 
 ## Part 2 - Modifying The Repository
@@ -100,35 +102,49 @@ take a great deal of effort to write.
 The second modification you'll be making to the kernel is to add variable memory
 support.  That will get you experience with the xv6 bootup, a little familiarity
 with system-call like behavior, and some assembly experience.  We'll cover that
-more in Part 3. **FIXME: Link?**
+more in Part 3.
+
+**MAY BE REMOVED **
+In the fourth and final part of the lab, you're going to get a touch of
+experience writing a user system-call.  This will allow you to query the
+available and total physical memory in xv6.  This will help you get familiarized
+with the system-call infrastructure of xv6, and system call support in general.
+**END MAY BE REMOVED **
 
 ### The Specification
 
-For this part of the lab, you will be modifying the xv6 kernel to add
+For part 2 of the lab, you will be modifying the xv6 kernel to add
 stack-trace support through a function named `backtrace`.  Backtrace has the
 following specification:
 
 ```c
-void backtrace()
+void backtrace();
 
 Summary:
 Prints the stack trace of any functions run within the kernel.
+```
 
 The format of the data printed is:
+```
+Backtrace:
    <0xaddress0> [top_of_stack_function_name]+offs1
    <0xaddress1> [next_function_in_stack_name]+offs2
    ...
    <0xaddressN> [last_function_in_stack]+offsN
 ```
+**NOTE: there are three space characters (' ') preceeding each of the address lines.
 
 You must create a header `backtrace.h` with the declaration of the `backtrace()`
-function, such that any kernel file including `backtrace.h` may run the
-`backtrace()` function.
+function (but not definition, definitons generally belong in c files), such that
+any kernel file including `backtrace.h` may run the `backtrace()` function.
 
 ##### The format:
-The backtrace function will print N lines, where N is the number of functions in
-the kernel's stack (excluding the backtrace function itself).  Each of those
-lines will have the following information and format (in order from left to right):
+The backtrace function will print N+1 lines, where N is the number of functions in
+the kernel's stack (excluding the backtrace function itself).  The first line
+will read `Backtrace:`.
+
+Each of the following N lines will have the following information and format (in
+order from left to right):
 -  three (3) spaces to start the line
 -  The address of the next instruction to run in the stack, printed in lower-case hex, surrounded on the left by a single `<` and on the right by a single `>`
 -  a single space
@@ -209,12 +225,26 @@ This forces the stack layout to appear as follows:
 |  Local Variables  |
 ---------------------
 |        ...        |
---------------------- <= $esp
+--------------------- <= %esp
 
 Curent registers:
 
 $esp: Top of current stack
 $ebp: Base Pointer N
+```
+
+To ease your use of this lab, we provide you with the following helper macro
+in `include/asm/x86.h`:
+
+```c
+// This is a define, so its always inlined
+// Reads the current value of the register %ebp into the variable passed by
+// dest.
+// USAGE:
+// int ebp;
+// read_ebp(dest);
+// -- dest now contains %ebp ---
+#define read_ebp(dest)
 ```
 
 #### Symbol Information:
@@ -232,28 +262,39 @@ this information out of the address space.
 
 ##### STAB information
 
-The kernel has embedded in its address space [STAB information](TODO-stab-link).  This information
-is placed at special symbols called `todo-symname` and `todo-other-symname`.
-You can learn more about how we do this by exploring [linker
-scripts](TODO-linker-scripts), and looking at ours in `kernel/kernel.ld`.
+The kernel has embedded in its address space [STAB information](https://sourceware.org/gdb/current/onlinedocs/stabs/Overview.html).
+This information is placed at special symbols called `__STAB_BEGIN__` and
+`__STABSTR_BEGIN__`.  You can learn more about how we do this by exploring
+[linker scripts](https://sourceware.org/binutils/docs/ld/Scripts.html), and
+looking at ours in `kernel/kernel.ld`.
 
 Having you write a library that parses the STAB information would be a little
 too  tedious for a class project, so we have instead provided you with a stab
-library in the file `stab-file.c`.  The library includes the following relevant
-functions:
+library in the file `kernel/stab.c` and its associated header
+`kernel/include/stab.h`.  
+
+The library includes the following relevant functions:
 
 ```c
-!!!Function definitions here!!!
+// Populates info to contain the stab_info about the given eip.
+// Returns 0 on success, non-zero on failure.
+int stab_info(uint eip, struct stab_info *info);
 ```
 
 
 ## Part 3 - Modifying boot.
 
-The final part of this lab will involve modifying the boot system of the kernel
+This part of this lab will involve modifying the boot system of the kernel
 to detect the amount of available RAM on the machine, then passing and utilizing
 that information within the xv6 kernel.
 
-First, some preliminaries:
+**NOTE:** For much of this portion of the lab you will be modifying the kernel before its
+console print infrastructure is set up, making debugging via print basically
+impossible.  We strongly advise you to complete Lab 0 before attempting this
+part of lab 1.
+
+Before we get into the specifics of the lab, lets cover some background
+knowledge.
 
 ### Background Information
 
@@ -280,7 +321,7 @@ step to the next instruction, at address 0xe05b in the BIOS.
 
 The low-level details of what the BIOS does are hardware specific and not
 relevant for this course (if you're really interested, you can look at xv6's
-[bios source](TODO-sea-bios)).  What we care about for this course is the
+[bios source](https://github.com/qemu/qemu/tree/master/pc-bios)).  What we care about for this course is the
 handshake the bios makes with the actual kernel.
 
 When the bios finishes running, it loads a single disk block (the first block on
@@ -304,7 +345,7 @@ more about this later), and any BIOS functions that run must also be run from
 
 #### Boot Loader (bootblock)
 
-The boot loader is the first easily modifyable code that runs (it runs from the
+The boot loader is the first easily modifiable code that runs (it runs from the
 first disk block), so it can be more complex and flexible than the BIOS.
 However, the boot loader also operates in a constrained environment.  It starts
 in 16-bit real mode (a mode of the x86 processor with 16-bit registers, and
@@ -319,14 +360,14 @@ kernel into memory, it jumps into the kernel at the end of `bootmain` in
 `bootblock/bootmain.c`.
 
 Modern bootloaders preform much more complex tasks than our bootblock, 
-[GRUB](TODO-grub) is an example of a modern boot loader.
+[GRUB](https://www.gnu.org/software/grub/) is an example of a modern boot loader.
 
 #### Kernel Startup
 
 The kernel goes through a long, arduous boot process, beginning at `entry` in
 `kernel/src/asm/entry.S`, and continuing through much of kernel's `main` in
-`kernel/src/main.c`.  This process will be relevant throughout the course, and
-we wont cover it in too much detail here.
+`kernel/src/main.c`.  This process will be relevant throughout the course, so
+feel free to take a look at it.  However, we wont cover it in too much detail here.
 
 ### The Assignment
 
@@ -340,9 +381,11 @@ user-space to utilize it.
 
 In this part of the lab, we're going to call into the BIOS, and have it tell us
 how much memory is available, then we'll pass this information into our kernel
-proper.  However, as you'll see in a moment, we have to call the BIOS from the
-bootblock, in 16-bit real mode, and pass the information to the kernel from
-there.
+proper.  However, recall that the bios assumes the processor is running in
+16-bit real mode (not the more common 32-bit mode that our kernel actually runs
+in).  This means, we have to call the BIOS from the bootblock, before it
+transitions us out of 16-bit real mode, and pass the information to the kernel
+from there.
 
 This part of your assignment has three sub-tasks:
 1.  Get the available RAM from the bootblock
@@ -353,12 +396,13 @@ This part of your assignment has three sub-tasks:
 
 As the BIOS is responsible for initializing and configuring the RAM controller,
 it is our definitive source on how much RAM the machine has, and the logical
-place to ask about allocated memory.  However, our bootloader cannot simply call into the
-BIOS (then our bootloader would be BIOS dependant, and we don't want that),
-instead the BIOS exports an interface much like the system-call interface.
-We'll be making a BIOS call by interrupting and passing control into the BIOS
-through the `int` instruction.  Once this is done, the BIOS will pass us the
-information needed, and return.
+place to ask about allocated memory.  However, our bootloader cannot simply jump
+into the BIOS (then our bootloader would be BIOS dependant, and we don't want
+that), instead the BIOS exports an interface much like the system-call
+interface.  We'll be making a BIOS call by interrupting and passing control into
+the BIOS through the `int` instruction (much like system calls use the int
+instruction).  Once this is done, the BIOS will pass us the information needed,
+and return.
 
 Recall that the BIOS runs before the boot loader, and must run in 16-bit
 real-mode.  As a result, we must make our BIOS call from code running in 16-bit
@@ -370,25 +414,54 @@ CPU converts to 32-bit mode, in the bootloader.
 As the BIOS call is tedious and complex, we wont require you to actually write
 the assembly for the call itself, we've provided that method detailed below.
 Your job is to place the call at the appropriate location, and handle putting
-that memory in a location the kernel can read from.
+that memory in a location the kernel can read from.  The bios call is defined in
+`bootblock/e820.S`
 
 ```asm
+# The desetination adder (where the data will be stored) is passed in eax
+# Makes the e820 bios call.  The result of the call will be stored in the
+# address passed in ax (note only 16-bits available).
+#
+# The following information will be stored at *ax
+# +0 : a 4-byte size field, containing the number of e820 records found
+# +4 : an array of e820 records.
+#
+# E820 records are 32 bytes in size, and have the following format:
+# +0 : an 8-byte physical_address field
+# +8 : an 8-byte length field
+# +16 : a 4-byte type field
+# +24 : a 4 byte apic3 field (unused)
+#
+# The physical_address field contains the physical address of the RAM block
+# The length field contains the number of bytes in this RAM block
+# The type field contains the type of memory:
+#   1 - usable
+#   2 - reserved
+#   3 - ACPI reclaimable
+#   4 - ACPI NVS
+#   5 - bad memory
+#   -- for the purpose of this lab, we only care about type 1 memory
+.globl do_e820
+do_e820:
 ```
+
+More information on the e820 bios call can be found
+[here](https://wiki.osdev.org/Detecting_Memory_(x86)#BIOS_Function:_INT_0x15.2C_EAX_.3D_0xE820).
+For the purpose of this lab, we're going to assume the call behaves well
+(regions are reported in-order, and non-overlapping).
 
 #### The Kernel.
 
 Once you have the memory passed to the kernel, your job within the kernel is
 make it aware of the amount and location of physical memory, and to enable the
 kernel to use that physical memory from its `kalloc` function.  After you have
-completed this lab the kernel should be able to allocate all not statically
+completed this lab the kernel should be able to allocate all non-statically
 allocated physical pages from the `kalloc` function, and `kalloc` should never
 return a physical page that isn't present on the system.
 
 We encourage you to familiarize yourself with the kernel's `kinit` functions,
 and physical memory allocation functions, as they will likely be useful in
 completing this exercise
-
-
 
 ## Grading
 
@@ -401,5 +474,17 @@ collaborate or share code with others (although discussion is allowed).  Your
 code will be checked for cheating, and any detection of shared code, or pulling
 code from the internet will be harshly punished.
 
-TODO: Actual submission instructions...  Once I figure them out.
+To submit to the autograder, first push your code into your class repository.
+Your code must be pushed to the `lab1` branch.  Then, visit the autograder's web
+interface [here](https://dominion.cc.gt.atl.ga.us/).  Authenticate with github,
+then submit your lab1 code for grading.  The lab1 code will be automatically
+pulled from github, and graded by the autograder.  You should see interactive
+feedback on the website, as well as receive an email once the grading is
+finished.  This lab is subject to all [autograder policies](todo), please review
+them before submitting.
+
+**NOTE:** Any unauthorized attempt to subvert or attack the autograder will be
+considered a violation of academic integrity, and will be punished.  The
+autograder logs all submissions both locally and remotely, so any submission may
+be audited.
 

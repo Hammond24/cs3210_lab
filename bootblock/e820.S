@@ -12,6 +12,28 @@ dest_addr:
 
 
 # The desetination adder (where the data will be stored) is passed in eax
+# Makes the e820 bios call.  The result of the call will be stored in the
+# address passed in ax (note only 16-bits available).
+#
+# The following information will be stored at *ax
+# +0 : a 4-byte size field, containing the number of e820 records found
+# +4 : an array of e820 records.
+#
+# E820 records are 32 bytes in size, and have the following format:
+# +0 : an 8-byte physical_address field
+# +8 : an 8-byte length field
+# +16 : a 4-byte type field
+# +24 : a 4 byte apic3 field (unused)
+#
+# The physical_address field contains the physical address of the RAM block
+# The length field contains the number of bytes in this RAM block
+# The type field contains the type of memory:
+#   1 - usable
+#   2 - reserved
+#   3 - ACPI reclaimable
+#   4 - ACPI NVS
+#   5 - bad memory
+#   -- for the purpose of this lab, we only care about type 1 memory
 .globl do_e820
 do_e820:
   mov %ax, (dest_addr)

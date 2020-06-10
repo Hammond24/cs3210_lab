@@ -104,7 +104,14 @@ readeflags(void)
 }
 
 // This is a define, so its always inlined
-#define read_ebp(dest) do { \
+// Reads the current value of the register %ebp into the variable passed by
+// dest.
+// USAGE:
+// int ebp;
+// read_ebp(dest);
+// -- dest now contains %ebp ---
+#define read_ebp(dest) \
+  do { \
     __asm __volatile("" : : : "memory"); \
     __asm __volatile("movl %%ebp,%0" : "=r" (dest)); \
     __asm __volatile("" : : : "memory"); \
