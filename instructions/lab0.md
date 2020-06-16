@@ -77,7 +77,7 @@ Now, in a separate terminal, launch gdb from your build directory:
 you to enable gdb to use our `.gdbinit` script to connect to qemu.
 
 Once this is complete, it should take you to a gdb console, with the initial
-BIOS ljmp instruction from the x86 machine's reset vector:
+BIOS `ljmp` instruction from the x86 machine's reset vector:
 ```
 ljmp   $0xf000,$0xe05b
 ```
