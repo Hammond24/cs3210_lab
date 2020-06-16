@@ -16,8 +16,8 @@ function print_help() {
   print "    -m  --memory    -- Set the amount of memory to give to xv6 (default is ${MEMORY})"
 }
 
-OPTIONS="h?c:gxvm"
-LONGOPTS="help,num-cpus:,gdb,x-server,verbose,memory"
+OPTIONS="h?c:gxvm:"
+LONGOPTS="help,num-cpus:,gdb,x-server,verbose,memory:"
 
 ! PARSED=$(getopt --options=${OPTIONS} --longoptions=${LONGOPTS} --name "$0" -- "$@")
 
