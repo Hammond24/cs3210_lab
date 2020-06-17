@@ -135,6 +135,12 @@ lcr3(uint val)
   __asm__ volatile("movl %0,%%cr3" : : "r" (val));
 }
 
+static __inline void
+invlpg(void *addr)
+{
+  __asm __volatile("invlpg (%0)" : : "r" (addr) : "memory");
+}
+
 //PAGEBREAK: 36
 // Layout of the trap frame built on the stack by the
 // hardware and by trapasm.S, and passed to trap().
