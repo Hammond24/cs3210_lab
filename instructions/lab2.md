@@ -1,7 +1,7 @@
 # Lab 2 - Virtual Memory
 
-In this lab you will be modifying the xv6 virtual memory system, getting first
-hand familiarity with complex OS concepts.  You will do so by modifying the xv6
+In this lab you will be modifying the xv6 virtual memory system, making virtual
+memory allocation to be far more efficient.  You will do so by modifying the xv6
 memory system to provide much more efficient management of OS memory resources
 through the virtual memory system.
 
@@ -53,11 +53,16 @@ parent writes memory.
 
 For this portion of the lab, you will build a copy-on-write implementation for
 xv6, in which on fork you will not copy the contents of any user-pages, instead
-lazily allocating them as needed (at the time of write).
+lazily allocating them as needed (at the time of write).  Your solution is
+expected to be transparent to the user-space (the behavior observed by the
+user-space before and after your copy-on-write implementation will be
+identical), with the exception that the new implementation will have far more
+efficient `fork`s, and more available system memory.
 
-**NOTE**: For this lab you are required to create a unique page-directory and
-unique page-tables per process (although this is not strictly necessary), it is
-only the pages data that should not be copied.
+**NOTE**: For simplicity in this lab you are required to create a unique
+page-directory and unique page-tables per process (although this is not strictly
+necessary), it is only the data pages that should follow copy-on-write
+semantics.
 
 
 ### Copy-on-write forking advice
@@ -85,12 +90,15 @@ is the ownership of a physical page?  Of a virtual page?
 - When you modify the permissions of a present virtual page in the page-table,
   you'll have to invalidate the TLB entry for that page, we've provided you a
   function to do so `invlpg(void *vaddr)` in `include/asm/x86.h`.  **NOTE:** you
-  don't need to invalidate a page that isn't present in the current page table.
+  don't need to invalidate a page if it isn't present in the current virtual
+  address space (as resetting cr3 will cause a TLB invalidation on its behalf).
 - If you feel overwhelmed with this lab, don't give up.  We have an active
   Piazza, copious office hours and support structures to help you get through
-  this.  The hard part of this class is often in a concise design, not in a
-  complex implementation (Prof. Devecsery's solution modifies under 300 LOC for
-  this project, but it isn't by any means easy).
+  this we are willing to help you at all stages of implementation, from
+  understanding the spec to debugging.  The hard part of this class is often in
+  a concise design, not in a complex implementation (Prof. Devecsery's solution
+  modifies under 300 LOC for this project, but the project isn't by any means
+  easy).
 
 # Part 2 - Zero Initialized Data
 
@@ -109,7 +117,7 @@ deduplication, and lazy page zero allocation to your kernel.  These are the
 following design principals you're expected to follow:
 
 - Zero-filled virtual addresses should be lazily allocated, allocating a
-  physical page of them only on write.
+  unique physical page only on write.
 - All zero-initialized virtual pages should share read-only access to a single
   physical zero-page, that is never written.
 - Any write to a zero-initialized page will cause a new physical page to be
@@ -121,18 +129,23 @@ following design principals you're expected to follow:
   include page-faults (100s of cycles) and copies (1000s-10000s of cycles).  You
   should always prefer an additional page-fault to an unneeded copy.
 
-- You are not expected to keep a mapping from physical pages to virtual address
-  spaces, as a result, you are allowed to take one extra page fault (but not a
-  page copy) when a physical page becomes referenced by exactly one virtual page.
+- You are not to keep a mapping from physical pages to virtual address spaces
+  (this gets complex quickly), as a result, you are allowed to take one extra
+  page fault (but not a page copy) when a physical page becomes referenced by
+  exactly one virtual page.
+
+- Your lab should be generally efficient.  You may not waste excess memory
+  unnecessarily, or preform particularly computationally inefficient activities
+  (like scanning all page tables of all processes on page fault).
 
 # General advice and hints
 
 - You may need to store per-physical-page information as part of this lab.
 - The page-table-entry structure of x86 has several "ignored" bits.  Feel free
-  to use these to store extra information about a virtual address needed for
-  this lab.
-- The kernel may sometimes access a user-space page on the user's behalf (can you
-  think of when?).  You should handle these instances gracefully.
+  to use these to store virtual-page specific extra information about a virtual
+  address needed for this lab.
+- The kernel may sometimes access a user-space page on the user's behalf (can
+  you think of when?).  You should handle these instances gracefully.
 - In order to get full credit for this lab you'll have to consider the corner
   cases of this design.  What extremes can you think of testing for?
 
