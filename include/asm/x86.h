@@ -136,7 +136,7 @@ lcr3(uint val)
 }
 
 static __inline void
-invlpg(void *addr)
+invlpg(void *vaddr)
 {
   __asm __volatile("invlpg (%0)" : : "r" (addr) : "memory");
 }
