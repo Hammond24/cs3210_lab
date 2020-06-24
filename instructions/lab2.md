@@ -83,9 +83,8 @@ is the ownership of a physical page?  Of a virtual page?
 
 - You can find a somewhat in-depth explanation of the xv6 paging structure in
   chapter 2 of the
-  [xv6 manual](xv6 manual).  A more
-  in-depth description is also available in the [intel manual](intel manual)
-  chapter 4.
+  [xv6 manual].  A more
+  in-depth description is also available in the [intel manual] chapter 4.
 - Consider complex parent-child relationships when designing your code.  Think
   of complex relationships, such as what should happen when a parent forks two
   children, when a parent dies before its child, or when a parent forks a child
