@@ -81,8 +81,11 @@ Think carefully about your design before you build it.  What structures need
 what metadata?  What's the best way to store and organize that metadata?  What
 is the ownership of a physical page?  Of a virtual page?
 
-- We have provided a somewhat in-depth explanation of the xv6 paging structure
-  [here](TODO-xv6-paging-info).  Feel free to use this as a reference.
+- You can find a somewhat in-depth explanation of the xv6 paging structure in
+  chapter 2 of the
+  [xv6 manual](xv6 manual).  A more
+  in-depth description is also available in the [intel manual](intel manual)
+  chapter 4.
 - Consider complex parent-child relationships when designing your code.  Think
   of complex relationships, such as what should happen when a parent forks two
   children, when a parent dies before its child, or when a parent forks a child
@@ -141,9 +144,11 @@ following design principals you're expected to follow:
 # General advice and hints
 
 - You may need to store per-physical-page information as part of this lab.
-- The page-table-entry structure of x86 has several "ignored" bits.  Feel free
-  to use these to store virtual-page specific extra information about a virtual
-  address needed for this lab.
+- The page-table-entry structure of x86 has several "ignored" bits (bits 9-11).
+  Feel free to use these to store virtual-page specific extra information about
+  a virtual address needed for this lab. (references are Figure 2-1, pg 30 of
+  the [xv6 book](xv6 manual), and Figure 4-4, pg 4-11 of the [intel
+  manual](intel manual))
 - The kernel may sometimes access a user-space page on the user's behalf (can
   you think of when?).  You should handle these instances gracefully.
 - In order to get full credit for this lab you'll have to consider the corner
@@ -178,3 +183,5 @@ and [autograder
 manual](https://github.gatech.edu/cs3210-fall20/xv6-public/blob/main/instructions/autograder_instructions.md).
 
 
+[intel manual]: https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-3a-3b-3c-and-3d-system-programming-guide.html
+[xv6 manual]: http://cs3210.cc.gatech.edu/r/xv6-rev9-book.pdf
