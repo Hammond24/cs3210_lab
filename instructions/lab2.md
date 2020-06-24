@@ -147,8 +147,7 @@ following design principals you're expected to follow:
 - The page-table-entry structure of x86 has several "ignored" bits (bits 9-11).
   Feel free to use these to store virtual-page specific extra information about
   a virtual address needed for this lab. (references are Figure 2-1, pg 30 of
-  the [xv6 book](xv6 manual), and Figure 4-4, pg 4-11 of the [intel
-  manual](intel manual))
+  the [xv6 book], and Figure 4-4, pg 4-11 of the [intel manual])
 - The kernel may sometimes access a user-space page on the user's behalf (can
   you think of when?).  You should handle these instances gracefully.
 - In order to get full credit for this lab you'll have to consider the corner
