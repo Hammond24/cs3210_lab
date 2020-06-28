@@ -167,6 +167,22 @@ must also call the following function whenever you receive a pagefault:
 lab2_report_pagefault(struct trapframe *tf);
 ```
 
+The functions `lab2_pgcopy()` and `lab2_pgzero()` are defined as follows:
+
+```
+void lab2_pgcopy(void *dest, void *src, uint va);
+Arguments:
+dest - The destination (address) of the page to be copied to (must be page
+aligned)
+src - The source page to be copied from (must be page aligned)
+va - The user-space virtual address about to be copied.
+
+void lab2_pgzero(void *dest, uint va)
+Arguments:
+dest - The destination address to be zeroed (must be the start of a 4KB page)
+va - The user-space address being zeroed
+```
+
 We've provided definitions of these functions in two files
 `kernel/src/lab2_ag.c` and `kernel/src/lab2_ag_noprint.c`.  They may be switched
 using your `kernel/Sources.cmake` file.  The intended purpose of these functions
