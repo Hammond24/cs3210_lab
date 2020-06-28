@@ -18,7 +18,7 @@ void lab2_pgcopy(void *dest, void *src, uint user_va) {
 void lab2_report_pagefault(struct trapframe *tf) {
   uint va = rcr2();
   uint err = tf->err;
-  cprintf("PGTRAP: err: 0x%x, va = 0x%x", err, va);
+  cprintf("PGTRAP: err: 0x%x, va = 0x%x\n", err, va);
 }
 
 
