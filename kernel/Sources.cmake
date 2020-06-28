@@ -35,8 +35,14 @@ set(kernel_SOURCES
 	src/trap.c
 	src/uart.c
 	src/vm.c
+  )
+
+set(kernel_LAB2AG
+  # Switch this between lab2_ag.c and lab2_ag_noprint.c to enable/disable
+  #   zero/copy page printing
 
   src/lab2_ag.c
   #src/lab2_ag_noprint.c
   )
+
 

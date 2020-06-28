@@ -17,12 +17,14 @@ add_library(vectorobj OBJECT
   gen/vectors.S)
 
 add_library(kernelobjs OBJECT
-  ${kernel_SOURCES})
+  ${kernel_SOURCES}
+  ${kernel_LAB2AG})
 
 add_prefix_suffix(kernel_OBJECTS
   "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/kernelobjs.dir/"
   ".o"
-  ${kernel_SOURCES})
+  ${kernel_SOURCES}
+  ${kernel_LAB2AG})
 
 set(entryother_SOURCES
   src/asm/entryother.S)
