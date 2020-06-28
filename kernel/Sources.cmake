@@ -35,5 +35,8 @@ set(kernel_SOURCES
 	src/trap.c
 	src/uart.c
 	src/vm.c
+
+  src/lab2_ag.c
+  #src/lab2_ag_noprint.c
   )
 

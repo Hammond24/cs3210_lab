@@ -138,7 +138,7 @@ lcr3(uint val)
 static __inline void
 invlpg(void *vaddr)
 {
-  __asm __volatile("invlpg (%0)" : : "r" (addr) : "memory");
+  __asm __volatile("invlpg (%0)" : : "r" (vaddr) : "memory");
 }
 
 //PAGEBREAK: 36

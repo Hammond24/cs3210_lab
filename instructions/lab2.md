@@ -157,20 +157,32 @@ following design principals you're expected to follow:
 Your lab will be graded on both correctness (the correct output is observed),
 and efficiency (you have a minimal number of page-faults, page-copies, and
 page-zeros).  To facilitate the autograder in grading correctly, your lab2
-branch has been modified to replace any page zeros with a call to our function
-`lab2_pgzero()`, and any page copies to `lab2_pgcopy()`.  For full credit, you
-must continue to call `lab2_pgzero` and `lab2_pgcopy` whenever your project
-zeros or copies a page respectively.  You must also call the following function
-whenever you receive a pagefault:
+branch has been modified to replace most user-space page zeros (see the note
+below) with a call to our function `lab2_pgzero()`, and any page copies to
+`lab2_pgcopy()`.  For full credit, you must continue to call `lab2_pgzero` and
+`lab2_pgcopy` whenever your project zeros or copies a page respectively.  You
+must also call the following function whenever you receive a pagefault:
 
 ```
 lab2_report_pagefault(struct trapframe *tf);
 ```
 
-These observation points will allow our autograder to determine you handle
-page-faults efficiently.  You are, however, *not* allowed to change the supplied
-`kernel/lab2_ag.c` or `kernel/include/lab2_ag.h` files.
+We've provided definitions of these functions in two files
+`kernel/src/lab2_ag.c` and `kernel/src/lab2_ag_noprint.c`.  They may be switched
+using your `kernel/Sources.cmake` file.  The intended purpose of these functions
+and these files is to give the autograder some additional insight into how you
+are handling the zero-initialize and copy-on-write filling of pages.  However,
+the prints created by these functions can sometimes make it hard to tell what
+the behavior of the test is, so we provided a `noprint` version which will not
+add any additional prints.  You may select which version you would like to use
+for testing (we recommend using both!).  The autograder will test with both.
+You are *not* allowed to change the supplied `kernel/src/lab2_ag.c`,
+`kernel/src/lab2_ag_noprint.c`, or `kernel/include/lab2_ag.h` files.
 
+**NOTES:**
+- You are not expected to call `lab2_pgcopy` or `lab2_pgzero` for the initial
+  page of the first process created by the kernel (in `kernel/src/inituvm.c`),
+  or for any kernel data-pages (e.g. va > KERNBASE).
 
 # Submission
 
