@@ -35,6 +35,56 @@ with:
 git checkout lab2
 ```
 
+## Background
+
+The default xv6 virtual memory system naively allocates a physical page per
+data-page addressable by user-space processes.  This results in poor performance
+through two primary metrics: 1) physical pages may be allocated and never used,
+wasting memory 2) user-accessible physical pages must be either copied from
+other pages (on fork) or zeroed (on allocation), even though they may never be
+used.  This is highly inefficient, and no modern operating systems eagerly
+allocate memory.
+
+Instead, modern OS's rely on lazy allocation, allocating physical space for
+virtual memory addresses only when needed.  They use two techniques we'll
+concern ourselves with for this lab: copy-on-write forking, and lazy zero
+initialization.
+
+Copy-on-write forking leverages the fact that on fork both the parent and child
+have logically equivalent address spaces.  In fact, their address spaces only
+diverge when either the parent or the child write to memory.  This means the
+parent and child can share physical data pages, until either writes to memory.
+
+Lazy zeroing of pages helps reduce the costs of memory allocation, and accessing
+zeroed pages.  When new memory is allocated by the kernel (e.g. through `sbrk`),
+that data contained in that memory must logically be zero. (There is a huge
+issue if the data isn't zeroed, can you think it?)   However, just because the
+user-space as allocated a page, that doesn't mean they need a true physical
+page.  If a given data page is never accessed by the process, or only read, the
+kernel need not allocate a unique page for it.  Instead, the kernel may point
+all logically zero-filled user-space pages to a single zero-initialized physical
+page, only allocating a unique physical page when the address is written to.
+
+In this lab, you will build those two optimizations, as specified below.
+
+## High-Level Notes
+
+This lab is strictly about optimization.  You will not be adding any new
+user-facing functionality.  In fact, for this lab you are *required* to maintain
+binary compatibility with the baseline xv6 kernel provided to you.  That is, any
+binary that could run on the original xv6 must be able to run unmodified on new
+xv6 kernel.
+
+This lab is intended to test and develop your knowledge of lazy allocation.  As
+a guiding principle, you should aim to **reduce the overall costs of virtual
+memory management**.  This means you should aim to *minimize unneeded page
+copies and page zeros*, and *minimize interrupts*.  Note, that page copies
+cost more than page-zeros, and cost an order-of-magnitude more than an
+interrupt.  Given the option, you should prefer a page zero to a page copy, and
+an interrupt to either.  You should also minimize interrupts, as an interrupt on
+every memory access would result in very poor performance.
+
+
 ## Part 1 - Copy-on-write forking
 
 When xv6 forks a new process, it clones the parent's entire address space,
@@ -60,9 +110,10 @@ identical), with the exception that the new implementation will have far more
 efficient `fork`s, and more available system memory.
 
 **NOTE**: For simplicity in this lab you are required to create a unique
-page-directory and unique page-tables per process (although this is not strictly
-necessary), it is only the data pages that should follow copy-on-write
-semantics.
+page-directory and unique page-tables per process (e.g. not copy-on-write the
+page-table metadata pages) -- it is possible to copy-on-write these pages, but
+it would add additional complexity to the lab, and we are explicitly disallowing
+it.  Only the data pages should follow copy-on-write semantics.
 
 
 ### Copy-on-write forking advice
@@ -85,7 +136,7 @@ is the ownership of a physical page?  Of a virtual page?
   chapter 2 of the
   [xv6 manual].  A more
   in-depth description is also available in the [intel manual] chapter 4.
-- Consider complex parent-child relationships when designing your code.  Think
+- Consider complex parent-child relationships when designing your solution.  Think
   of complex relationships, such as what should happen when a parent forks two
   children, when a parent dies before its child, or when a parent forks a child
   forks a grandchild.
@@ -106,8 +157,8 @@ is the ownership of a physical page?  Of a virtual page?
 
 When the OS allocates a page for a process (e.g. through sbrk), that page is
 zero-initialized (its data is read as zero).  So, if a user-process were to
-allocate 1000 pages of virtual address space, each of those 1000 pages would be
-allocated as all-zero data.  This duplication of user-space data presents
+allocate 1000 new pages of virtual address space, each of those 1000 pages would
+be allocated as all-zero data.  This duplication of user-space data presents
 opportunity for optimization within the kernel.  A page that is zero-filled need
 not be immediately allocated, as the kernel knows that its contents will be all
 zero once accessed.  Furthermore, if a process only reads the zero data and
@@ -132,13 +183,17 @@ following design principals you're expected to follow:
   should always prefer an additional page-fault to an unneeded copy.
 
 - You are not to keep a mapping from physical pages to virtual address spaces
-  (this gets complex quickly), as a result, you are allowed to take one extra
-  page fault (but not a page copy) when a physical page becomes referenced by
-  exactly one virtual page.
+  (this gets complex quickly), as a result, you will take one more page fault
+  (but not a page copy) than necessary when a physical page becomes referenced
+  by exactly one virtual page.
 
 - Your lab should be generally efficient.  You may not waste excess memory
   unnecessarily, or preform particularly computationally inefficient activities
   (like scanning all page tables of all processes on page fault).
+
+-  In `trap.c` kernel preemptive scheduling has been disabled, this is to enable
+   reliable auto-grading.  For this lab only, do not re-enable it.  You are also
+   not to change the kernel's default round-robin scheduler (for this lab only).
 
 # General advice and hints
 
@@ -151,6 +206,10 @@ following design principals you're expected to follow:
   you think of when?).  You should handle these instances gracefully.
 - In order to get full credit for this lab you'll have to consider the corner
   cases of this design.  What extremes can you think of testing for?
+- You are extremely unlikely to get full credit for this lab without writing
+  your own unit-tests.  We strongly encourage you to write unit tests that
+  express corner-case behaviors, and carefully test and verify the correctness
+  of your code.
 
 # Lab-specific requirements
 
