@@ -4,8 +4,8 @@ The purpose of this document is to outline the functionality, use, and rules of
 the cs3210 autograder.
 
 In cs3210 this semester we will be using an interactive autograder to help
-evalaute your lab solutions.  The autograder will download your submissions from
-[Gatech's github](https://github.gatech.edu), and then run a series of tests on
+evaluate your lab solutions.  The autograder will download your submissions from
+[GaTech's GitHub](https://github.gatech.edu), and then run a series of tests on
 your code, delivering the results to you as it runs (usually).  
 
 The goal of the autograder is to help you ensure you've implemented the project
@@ -20,7 +20,7 @@ The autograder is intended to help you throughout this course, and give you some
 confidence as to where you stand with your lab submissions.  However, the
 autograder doesn't have infinite resources, and needs to ensure submissions are
 kept safe.  As a result, the autograder has several specific policies it will
-require you adhere to.
+require you to adhere to.
 
 ### Feedback Submissions
 
@@ -34,7 +34,7 @@ will only provide students with a limited amount of feedback per day by limiting
 the number of submissions it provides feedback for.
 
 To be more precise, when you run the autograder with a feedback-enabled
-submission, the autograder will tell you what test number its running, if you
+submission, the autograder will tell you what test number it's running, if you
 passed that test, then ultimately the total number of tests you've passed.  This
 will give you a good idea of how well your submission did.  Once you've expended
 all of your available feedback enabled submissions, the autograder will only
@@ -43,7 +43,7 @@ tell you that it has run your submission, and provide no graded feedback.
 The policy on feedback-enabled submissions is that students get one-per-day
 (a day starts at midnight, and ends at midnight).  These "feedbacks" cannot be
 stockpiled (it goes away at midnight).  However, we understand that sometimes
-students are working hard, and don't want to wait until the next day to submit,
+students are working hard and don't want to wait until the next day to submit,
 so we provide 3 extra graded feedbacks per project, which the student may use at
 any point in place of a non-feedback submission (e.g. at your 2nd+ submission
 for that day).  These extra feedbacks do not transition between projects.
@@ -55,17 +55,17 @@ autograder) and remotely (off the autograder), and may be audited.  Any
 unauthorized attempt to subvert the autograder, either by gaining control of the
 autograder machine, exposing autograder testcases, or generally using the
 autograder for any purpose other than its intended one (to grade your code),
-will be considered a violation of Georgia Tech's honor code, and will be
+will be considered a violation of Georgia Tech's honor code and will be
 severely punished.  The autograder has many safety checks and fail-safes in
 place.  Do not attempt to attack the autograder!
 
 ### Autograder-Specific Requirements
 
 The autograder does place some specific restrictions on how you modify your
-code, and construct your labs.  You may add any source files you like to the
+code and construct your labs.  You may add any source files you like to the
 bootloader, kernel, or user files, but the autograder will not respect any
-changes to CMakeLists.txt (that would allow students to run arbitrary code),
-instead you must specify any changes in the list within the Sources.cmake
+changes to CMakeLists.txt (that would allow students to run arbitrary code).
+Instead, you must specify any changes in the list within the Sources.cmake
 directory.
 
 Additionally, the autograder will ignore any changes made to any of the scripts
@@ -93,18 +93,18 @@ includes:
 - kernel/tools/mksym.sh
 - kernel/tools/vectors.pl
 
-Furthermore, the autograder restricts the changes your allowed to make to your
+Furthermore, the autograder restricts the changes you are allowed to make to your
 Sources.cmake (`kernel/Sources.cmake`, `user/Sources.cmake`, and
 `bootblock/Sources.cmake`).  You are only allowed to modify the lists present in
 those files.
 
 Finally, when the autograder runs your code, it will do so in Release mode (with
 the option `-DCMAKE_BUILD_TYPE=Release`).  Ensure your code works in Release
-mode before submitting to the autograder!
+mode before submitting it to the autograder!
 
 ### Misc Autograder Rules
 
-- You may only have one submisson queued at a time (if you have a submission
+- You may only have one submission queued at a time (if you have a submission
   queued, but not yet graded, the autograder will reject additional submission
   requests until your submission is graded).
 
@@ -112,11 +112,11 @@ mode before submitting to the autograder!
 ## Autograder Use
 
 To use the autograder, visit the [autograder page][autograder], and click the
-authenticate button.  This will bring you to a github login page, where you will
+authenticate button.  This will bring you to a GitHub login page, where you will
 give the autograder permission to know your identity and checkout your private
-repositories.  Once you've completed the authentication, you  will be taken back
+repositories.  Once you've completed the authentication, you will be taken back
 to the autograder, where the autograder will display the available labs.  From
-here the operation of the autograder should be mostly self explanitory.  We'll
+here the operation of the autograder should be mostly self-explanatory.  We'll
 outline a few important details about lab submission now.
 
 ### Submission Confirmation
@@ -139,7 +139,7 @@ Late Days remaining: 3
 
 Feedback Given: True
 Extra Feedback Used: False
-Extra Feedback Remaining (after submisson): 0
+Extra Feedback Remaining (after submission): 0
 
 You have 5 minutes to confirm this submission, afterwards a resubmission is
 required.
@@ -151,17 +151,17 @@ Here is a quick breakdown of the fields in this confirmation message:
 - **Request has locked in timestamp** -- If you hit confirm within the next 5
   minutes, this is the timestamp that will be used for the purposes of grading
   your lab (and determining late-ness).
-- **github commit has to be graded**  -- This is the github hash that will be
+- **github commit hash to be graded**  -- This is the GitHub hash that will be
   checked out and graded by the autograder.  Ensure it matches the hash you've
-  last commited and pushed to your github repository (e.g. with `git log`).
+  last commited and pushed to your GitHub repository (e.g. with `git log`).
 - **Original Due Date**  -- If you were to never use late-days on this lab, when
   would it be due?
 - **Previous Due Date** -- Before this submission, what was your due date (any
-  late days you've used as a part of prior submissions will be reflected here)
+  late days you've used as a part of prior submissions will be reflected here)?
 - **New Due Date** -- After this submission, this is your new due date (after
-  late day application)
+  late day application).
 - **Late Days applied...** -- The number of late-days that will be used as a
-  part of this request (remember, you only get 3 for the entire semester)
+  part of this request (remember, you only get 3 for the entire semester).
 - **Late Penalty** -- What penalty to your score will you get from this
   submission due to it being late?  
 - **Late Days Remaining** -- The number of late days you have remaining for the
