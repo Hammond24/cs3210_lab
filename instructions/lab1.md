@@ -10,9 +10,6 @@ The lab is composed of three parts:
  - Third, you will get familiar with the boot procedure of xv6 by modifying the
    kernel to support variable memory sizes.
 
- - **UNSURE IF I'LL ADD THIS** Fourth, you will add a system-call to the xv6 kernel to let the user query
-   the available memory.
-
 
 ## Part 1 - checking out the repository
 
@@ -55,7 +52,7 @@ make
 **NOTE: The above code uses a "Debug" build. This disables optimizations and
 adds in debug symbols.  Its much easier to work with than a "Release" build, the
 default CMAKE_BUILD_TYPE.  The autograder (more later) will run your code in
-Release mode**
+"Release" mode**
 
 
 Once you've built xv6, you may launch your new kernel.  We've provided a
