@@ -8,29 +8,29 @@ of this course.
 This is the only lab where you will submit answers to questions, in prose.  All
 other labs will be autograded, and based on code.
 
-For this lab you will submit your answers to the canvas Lab0 assignment as a
+For this lab, you will submit your answers to the canvas Lab0 assignment as a
 txt, md, or pdf file by the due date and time given in the schedule.
 
 
 ## Downloading, Compiling, and Running xv6
 
 
-Start by checking your your xv6 repository.  The following line will clone your
+Start by checking out your xv6 repository.  The following line will clone your
 code into cs3210\_lab:
 
 ```bash
-     git clone git@github.gatech.edu:cs3210-fall20/<youruniquename>-xv6-public.git cs3210_lab
+git clone git@github.gatech.edu:cs3210-fall20/<youruniquename>-xv6-public.git cs3210_lab
 ```
 
 Now, build your repository.  We recommend building within a separate build
 directory:
 
 ```bash
-  cd cs3210_lab
-  mkdir build
-  cd build
-  cmake .. -DCMAKE_BUILD_TYPE=Debug
-  make
+cd cs3210_lab
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+make
 ```
 
 This will build and install the kernel.  
@@ -39,22 +39,22 @@ This will build and install the kernel.
 some programs, such as gcc, make, cmake, to actually build the kernel.  Install
 any missing programs as follows
 ```bash
-  sudo apt install <programs>
+sudo apt install <programs>
 ```
 
 If you have a new installation, we recommend installing at least:
 ```bash
-  sudo apt install gcc build-essential cmake
+sudo apt install gcc build-essential cmake
 ```
 
 Once make complete successfully you can try to boot the kernel by
 running our xv6-qemu script (from within your build directory):
 
 ```bash
-  ./xv6-qemu
+./xv6-qemu
 ```
 
-This should launch xv6 and take you to prompt.  You can view avaialble files
+This should launch xv6 and take you to a prompt.  You can view avaialble files
 with `ls`.  You can close qemu by pressing CTRL-a followed by x.
 
 ## Observing behaviors with gdb
@@ -63,14 +63,14 @@ Now, we're going to run our code with gdb.  We've attached a gdb flag to the xv6
 launcher script, please launch the xv6 launcher with gdb enabled:
 
 ```bash
-  ./xv6-qemu -g
+./xv6-qemu -g
 ```
 
 This should pause qemu from launching, and wait for a gdb session to attach.
 Now, in a separate terminal, launch gdb from your build directory:
 ```bash
-  cd <your build directory>
-  gdb
+cd <your build directory>
+gdb
 ```
 
 **NOTE:** gdb may give you an error.  Please follow the instructions they give
@@ -82,10 +82,10 @@ BIOS `ljmp` instruction from the x86 machine's reset vector:
 ljmp   $0xf000,$0xe05b
 ```
 
-This is a 16-bit real-mode instruction (an obsure mode of the x86 processor run
+This is a 16-bit real-mode instruction (an obscure mode of the x86 processor run
 at boot).  The 0xf000 is the real-mode segment, with 0xe05b the jumped to
 address.  Look up real-mode addressing, what is the linear address to which it
-is jumping? (question is ungraded)
+is jumping? (this question is ungraded)
 
 Find the address of \_start, the entry point of the kernel:
 ```
@@ -98,7 +98,7 @@ $ nm kernel/kernel | grep _start
 
 The kernel address is at 0010000c.
 
-Open gdb in the same directory, set a break point and run to \_start as in the
+Open gdb in the same directory, set a breakpoint and run to \_start as in the
 following:
 
 ```
@@ -150,7 +150,7 @@ the start of the boot block (`bootblock/bootasm.S`). Using the single
 instruction step (si) step through the bootblock. Where is the stack pointer
 initialized (filename, line)?
 
-4. Single step into bootmain. Now look at the stack using x/24x $esp. What is
+4. Single-step into bootmain. Now, look at the stack using x/24x $esp. What is
 there?
 
 5. What does the initial assembly of bootmain do to the stack? (Look in
@@ -158,12 +158,12 @@ bootblock.asm for bootmain.)
 
 6. Continue tracing. You can use breakpoints to skip over things. Look for
 where eip is set to 0x10000c. What happens to the stack as a result of that
-call? Look at the bootmain C code and compare to the bootblock.asm assembly
+call? Look at the bootmain C code and compare it to the bootblock.asm assembly
 code.
 
 ## Extra (not graded):
 
-For thought: (let us know if you play with it!): Most modern OS's boot using a
+For thought: (let us know if you play with it!): Most modern OSs boot using a
 firmware standard called UEFI instead of the older standard BIOS. Bootloaders
 like grub are designed to support both standards. Thus, grub should be able to
 boot xv6 on UEFI. Xv6 is not able to boot to the shell with UEFI because it has
