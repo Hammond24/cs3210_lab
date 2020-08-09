@@ -23,7 +23,7 @@ dest_addr:
 # +0 : an 8-byte physical_address field
 # +8 : an 8-byte length field
 # +16 : a 4-byte type field
-# +24 : a 4 byte apic3 field (unused)
+# +20 : a 4 byte apic3 field (unused)
 #
 # The physical_address field contains the physical address of the RAM block
 # The length field contains the number of bytes in this RAM block
