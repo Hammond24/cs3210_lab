@@ -131,7 +131,7 @@ Backtrace:
 ```
 **NOTE: there are three space characters (' ') preceeding each of the address lines.
 
-You must create a header `backtrace.h` with the declaration of the `backtrace()`
+You must create a header `backtrace.h` (located in `kernel/include/`) with the declaration of the `backtrace()`
 function (but not definition, definitons generally belong in c files), such that
 any kernel file including `backtrace.h` may run the `backtrace()` function.
 
