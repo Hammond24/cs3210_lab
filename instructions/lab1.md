@@ -485,3 +485,11 @@ considered a violation of academic integrity, and will be punished.  The
 autograder logs all submissions both locally and remotely, so any submission may
 be audited.
 
+
+## Extra
+
+If you're begging for more after this assignment, you may consider trying some
+of the following projects (no credit given, just fun experiments):
+-  Explore what it takes to get the xv6 kernel to boot with a commodity bootloader (e.g. Grub), why is this hard?
+-  Can the xv6 bootblock be made to work with an EFI (instead of BIOS) based bootloader?  What does that take?
+-  Can you get xv6 to use (not just recognize) arbitrarily large amounts of physical memory? (up to 4GB)  This is very challenging, but also very interesting!  (Its also highly related to lab 2)  (Even harder, you can use over 4GB of physical memory with PAE)
