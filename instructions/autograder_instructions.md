@@ -112,7 +112,8 @@ mode before submitting it to the autograder!
 ## Autograder Use
 
 To use the autograder, visit the [autograder page][autograder], and click the
-authenticate button.  This will bring you to a GitHub login page, where you will
+authenticate button.  NOTE: You'll have to be logged into the campus VPN to access
+it.  This will bring you to a GitHub login page, where you will
 give the autograder permission to know your identity and checkout your private
 repositories.  Once you've completed the authentication, you will be taken back
 to the autograder, where the autograder will display the available labs.  From
@@ -174,4 +175,4 @@ Here is a quick breakdown of the fields in this confirmation message:
 
 
 
-[autograder]:https://dominion.cc.gt.atl.ga.us/index.html
+[autograder]:https://cs3210-autograder.cc.gatech.edu/index.html
