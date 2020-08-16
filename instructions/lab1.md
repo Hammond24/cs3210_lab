@@ -464,7 +464,7 @@ completing this exercise
 
 As with all labs in this course, the lab has an associated autograder.  The
 policies and rules of the autograder may be found on the class
-[syllabus](TODO-syllabus).  You will submit your code to the auto-grader for
+[syllabus](https://gatech.instructure.com/courses/140830).  You will submit your code to the auto-grader for
 auto-grading.  There will also be a hand graded portion of this lab, worth 15%
 of your lab grade.  Finally, this is our only *individual* lab, you cannot
 collaborate or share code with others (although discussion is allowed).  Your
@@ -473,7 +473,8 @@ code from the internet will be harshly punished.
 
 To submit to the autograder, first push your code into your class repository.
 Your code must be pushed to the `lab1` branch.  Then, visit the autograder's web
-interface [here](https://dominion.cc.gt.atl.ga.us/).  Authenticate with github,
+interface [here](https://cs3210-autograder.cc.gatech.edu) (Note, you'll have to be
+on the gatech network -- e.g. through vpn -- to access the autograder site).  Authenticate with github,
 then submit your lab1 code for grading.  The lab1 code will be automatically
 pulled from github, and graded by the autograder.  You should see interactive
 feedback on the website, as well as receive an email once the grading is
