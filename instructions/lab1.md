@@ -101,12 +101,6 @@ support.  That will get you experience with the xv6 bootup, a little familiarity
 with system-call like behavior, and some assembly experience.  We'll cover that
 more in Part 3.
 
-**MAY BE REMOVED **
-In the fourth and final part of the lab, you're going to get a touch of
-experience writing a user system-call.  This will allow you to query the
-available and total physical memory in xv6.  This will help you get familiarized
-with the system-call infrastructure of xv6, and system call support in general.
-**END MAY BE REMOVED **
 
 ### The Specification
 
